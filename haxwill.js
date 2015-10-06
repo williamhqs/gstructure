@@ -5,9 +5,10 @@
                  "Medical",
                  "Advanced Manufacturing",
                  "IoT Enablement",
-                 "Consumer",
                  "Robotics",
-                 // ----------------
+                 // --------first--------
+                 "Consumer",
+                 // -------second---------
                  "Smart home",
                  "Pet tech",
                  "Sport tech",
@@ -17,7 +18,11 @@
                  "Lifestyle",
                  "Audio",
                  "HCI",
-                 "Ed-tech"];
+                 "Ed-tech",
+                 // -------third---------
+                  "four",
+                  // -------fourth---------
+                 ];
 
 	//渲染画布
 	var Renderer = function(canvas){
@@ -57,42 +62,15 @@
         // which allow you to step through the actual node objects but also pass an
         // x,y point in the screen's coordinate system
         // 
-        ctx.fillStyle = "white"
+        ctx.fillStyle = "green"
         ctx.fillRect(0,0, canvas.width, canvas.height)
-        
-        // particleSystem.eachEdge(function(edge, pt1, pt2){
-        //   // edge: {source:Node, target:Node, length:#, data:{}}
-        //   // pt1:  {x:#, y:#}  source position in screen coords
-        //   // pt2:  {x:#, y:#}  target position in screen coords
-
-        //   // draw a line from pt1 to pt2
-        //   ctx.strokeStyle = "rgba(255,0,0, .333)"
-        //   ctx.lineWidth = 5
-        //   ctx.beginPath()
-        //   ctx.moveTo(pt1.x, pt1.y)
-        //   ctx.lineTo(pt2.x, pt2.y)
-        //   ctx.stroke()
-        // })
 
         particleSystem.eachEdge(function(edge, p1, p2){
           if (edge.source.data.alpha * edge.target.data.alpha == 0) return
           gfx.line(p1, p2, {stroke:"#b2b19d", width:2, alpha:edge.target.data.alpha})
         })
 
-        // particleSystem.eachNode(function(node, pt){
-        //   // node: {mass:#, p:{x,y}, name:"", data:{}}
-        //   // pt:   {x:#, y:#}  node position in screen coords
-
-        //   // draw a rectangle centered at pt
-
-        //   var w = 10
-        //   ctx.fillStyle = (node.data.alone) ? "orange" : "black"
-
-        //   ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)
-        //   var label = node.data.label
-        //   ctx.fillText(label||"", pt.x, pt.y+4)
-        // })    			
-
+        
 
 
 		particleSystem.eachNode(function(node, pt){
@@ -114,22 +92,62 @@
 
 
       },
-      switchSection:function(newSection){
+      // switchSection:function(newSection){
       	
-      	if (typeof(particleSystem.getEdgesFrom(newSection)[0]) == 'undefined') return
-        var parent = particleSystem.getEdgesFrom(newSection)[0].source
+      // 	if (typeof(particleSystem.getEdgesFrom(newSection)[0]) == 'undefined') return
+      //   var parent = particleSystem.getEdgesFrom(newSection)[0].source
 
-    	
+      //   var children = $.map(particleSystem.getEdgesFrom(newSection), function(edge){
+      //     return edge.target
+      //   })
+        
+      //   particleSystem.eachNode(function(node){
+      //     if(node.data.level !='third') return
+      //     var nowVisible = ($.inArray(node, children)>=0)
+      //     var newAlpha = (nowVisible) ? 1 : 0
+      //     var dt = (nowVisible) ? .5 : .5
+      //     particleSystem.tweenNode(node, dt, {alpha:newAlpha})
+
+      //     if (newAlpha==1){
+      //       node.p.x = parent.p.x + .05*Math.random() - .025
+      //       node.p.y = parent.p.y + .05*Math.random() - .025
+      //       node.tempMass = .001
+      //     }
+      //   })
+      // },
+      switchSection:function(newNode){
+        var newSection = newNode.name
+        //如果不是Edges return
+        if (typeof(particleSystem.getEdgesFrom(newSection)[0]) == 'undefined') return
+        
+        //一个边的Source 也就是level为'second'
+        var parent = particleSystem.getEdgesFrom(newSection)[0].source
+        //连接'second'的边的所有target node
         var children = $.map(particleSystem.getEdgesFrom(newSection), function(edge){
           return edge.target
         })
         
+        console.log(newNode.data.level)
         particleSystem.eachNode(function(node){
-          if (node.data.shape=='dot') return // skip all but leafnodes
-
-          var nowVisible = ($.inArray(node, children)>=0)
+          console.log(node.name)
+          // console.log("aaa"+node.data.level)
+          if (newNode.data.level == 'second'){
+            if(!(node.data.level == 'third' || node.data.level =='fourth')) return
+          }else if (newNode.data.level == 'third'){
+            if( node.data.level !='fourth') return
+          }
+          
+            // 和当前被点击的second level有相连接的node
+          var nodesExist = ($.inArray(node, children)>=0)
+        
+          var nowVisible;
+          if (nodesExist && node.data.alpha == 0) {
+             nowVisible = 1;
+          }else{
+            nowVisible = 0;
+          }
           var newAlpha = (nowVisible) ? 1 : 0
-          var dt = (nowVisible) ? .5 : .5
+          var dt = (nowVisible) ? .5 : .1
           particleSystem.tweenNode(node, dt, {alpha:newAlpha})
 
           if (newAlpha==1){
@@ -156,8 +174,11 @@
 
             if (!nearest.node) return false
 
+
+            selected = (nearest.distance < 50) ? nearest : null
+
             if (nearest.node.data.shape!='dot'){ //add to forbid dot click
-              selected = (nearest.distance < 50) ? nearest : null
+              
               if (selected){
                  dom.addClass('linkable')
                  window.status = selected.node.data.link.replace(/^\//,"http://"+window.location.host+"/").replace(/^#/,'')
@@ -166,11 +187,10 @@
                  dom.removeClass('linkable')
                  window.status = ''
               }
-            }else 
-            if ($.inArray(nearest.node.name, nodesArray) >=0 ){
+            }else if ($.inArray(nearest.node.name, nodesArray) >=0 ){
               if (nearest.node.name!=_section){
                 _section = nearest.node.name
-                that.switchSection(_section)
+                // that.switchSection(_section)
               }
               dom.removeClass('linkable')
               window.status = ''
@@ -178,23 +198,22 @@
             
             return false
           },
+          //Rules here: Only level > 'second' can be clicked
           clicked:function(e){
-          	console.log("click")
             var pos = $(canvas).offset();
             _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
             nearest = dragged = particleSystem.nearest(_mouseP);
-            
-            if (nearest && selected && nearest.node===selected.node){
-            	
-              var link = selected.node.data.link
-              console.log("LLLLLLLLLLLLLLLL"+link)
-              if (link.match(/^#/)){
-              	console.log("lnnnnn11111111111nk")
-                 $(that).trigger({type:"navigate", path:link.substr(1)})
-              }else{
-              	console.log("lnnnnnnk")
-                 window.location = link
-              }
+            if (nearest && selected && nearest.node===selected.node && selected.node.data.level!='first'){
+              that.switchSection(selected.node)
+              // var link = selected.node.data.linkd
+              // console.log("LLLLLLLLLLLLLLLL"+link)
+              // if (link.match(/^#/)){
+              // 	console.log("lnnnnn11111111111nk")
+              //    $(that).trigger({type:"navigate", path:link.substr(1)})
+              // }else{
+              // 	console.log("lnnnnnnk")
+              //    window.location = link
+              // }
               return false
             }
             
@@ -260,28 +279,32 @@
 	      branch:"#b2b19d",
 	      code:"orange",
 	      doc:"#922E00",
-	      demo:"#a7af00"
+	      demo:"#a7af00",
+        company:"red"
 	    }
       
 
 		  var theUI = {
 		      nodes:{[nodesArray[0]]:{color:"red", shape:"dot", alpha:1},
-		             [nodesArray[1]]:{color:CLR.demo, shape:"dot", alpha:1,link:'http://www.hax.co'},
-		             [nodesArray[2]]:{color:CLR.demo, shape:"dot", alpha:1,link:'http://www.hax.co'},
-		             [nodesArray[3]]:{color:CLR.demo,shape:"dot", alpha:1,link:'http://www.hax.co'},
-		             [nodesArray[4]]:{color:CLR.demo,shape:"dot", alpha:1,link:'http://www.hax.co'},
-		             [nodesArray[5]]:{color:CLR.demo,shape:"dot", alpha:1,link:'http://www.hax.co'},
+		             [nodesArray[1]]:{color:CLR.demo, shape:"dot",level:"first",alpha:1,link:'http://www.hax.co'},
+		             [nodesArray[2]]:{color:CLR.demo, shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
+		             [nodesArray[3]]:{color:CLR.demo,shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
+		             [nodesArray[4]]:{color:CLR.demo,shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
 
-                 [nodesArray[6]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[7]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[8]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[9]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[10]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[11]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[12]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[13]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[14]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]},
-                 [nodesArray[15]]:{color:CLR.doc, alpha:0, link:'#'+[nodesArray[6]]}
+		             [nodesArray[5]]:{color:CLR.demo,shape:"dot",level:"second", alpha:1,link:'http://www.hax.co'},
+
+                 [nodesArray[6]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[7]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[8]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[9]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[10]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[11]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[12]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[13]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[14]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[15]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
+
+                 [nodesArray[16]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]}
 		             // Robotics:{color:CLR.doc, alpha:0, link:'http://www.revols.com'},
              		 // Flair:{color:CLR.doc, alpha:0, link:'http://www.sosv.com'}
 		             // echolalia:{color:CLR.demo, alpha:0, link:'/echolalia'},
@@ -303,7 +326,7 @@
 		          [nodesArray[4]]:{length:7},
               [nodesArray[5]]:{length:8}
 		        },
-            [nodesArray[4]]:{
+            [nodesArray[5]]:{
               [nodesArray[6]]:{length:5},
               [nodesArray[7]]:{length:5},
               [nodesArray[8]]:{length:5},
@@ -314,6 +337,9 @@
               [nodesArray[13]]:{length:5},
               [nodesArray[14]]:{length:5},
               [nodesArray[15]]:{length:5}
+            },
+            [nodesArray[6]]:{
+              [nodesArray[16]]:{length:10}
             }
 		      }
 		    }
