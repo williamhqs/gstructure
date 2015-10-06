@@ -19,9 +19,20 @@
                  "Audio",
                  "HCI",
                  "Ed-tech",
-                 // -------third---------
-                  "four",
-                  // -------fourth---------
+                 // -------third--------- 16
+                  "Preemadonna", 
+                  "Flair",
+                  "Motion Metrics",
+                  "Kokoon",
+                  "Ourobotics",
+                  "Arduboy",
+                  "Electroloom",
+                  "Picbuy",
+                  "Moai",
+                  "Bartesian",
+                  "Feetme",
+                  "Aria"
+                  // -------fourth--------- 27
                  ];
 
 	//渲染画布
@@ -62,7 +73,7 @@
         // which allow you to step through the actual node objects but also pass an
         // x,y point in the screen's coordinate system
         // 
-        ctx.fillStyle = "green"
+        ctx.fillStyle = "white"
         ctx.fillRect(0,0, canvas.width, canvas.height)
 
         particleSystem.eachEdge(function(edge, p1, p2){
@@ -280,7 +291,7 @@
 	      code:"orange",
 	      doc:"#922E00",
 	      demo:"#a7af00",
-        company:"red"
+        company:"green"
 	    }
       
 
@@ -304,7 +315,19 @@
                  [nodesArray[14]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
                  [nodesArray[15]]:{color:CLR.doc,shape:"dot",level:"third", alpha:0, link:'#'+[nodesArray[6]]},
 
-                 [nodesArray[16]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]}
+                 [nodesArray[16]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[17]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[18]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[19]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[20]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[21]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[22]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[23]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[24]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[25]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[26]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]},
+                 [nodesArray[27]]:{color:CLR.company,shape:"dot",level:"fourth", alpha:0, link:'#'+[nodesArray[6]]}
+
 		             // Robotics:{color:CLR.doc, alpha:0, link:'http://www.revols.com'},
              		 // Flair:{color:CLR.doc, alpha:0, link:'http://www.sosv.com'}
 		             // echolalia:{color:CLR.demo, alpha:0, link:'/echolalia'},
@@ -339,8 +362,28 @@
               [nodesArray[15]]:{length:5}
             },
             [nodesArray[6]]:{
-              [nodesArray[16]]:{length:10}
-            }
+              [nodesArray[16]]:{length:6},
+              [nodesArray[17]]:{length:6}
+            },
+            [nodesArray[7]]:{
+              [nodesArray[18]]:{length:6},
+              [nodesArray[19]]:{length:6}
+            },
+            [nodesArray[8]]:{
+              [nodesArray[20]]:{length:6},
+              [nodesArray[21]]:{length:6}
+            },
+            [nodesArray[9]]:{
+              [nodesArray[22]]:{length:6},
+              [nodesArray[23]]:{length:6}
+            },
+            [nodesArray[10]]:{
+              [nodesArray[23]]:{length:6},
+              [nodesArray[24]]:{length:6},
+              [nodesArray[25]]:{length:6},
+              [nodesArray[26]]:{length:6},
+              [nodesArray[27]]:{length:6}
+            },
 		      }
 		    }
     	sys.graft(theUI)
