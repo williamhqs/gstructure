@@ -37,43 +37,23 @@
 
 	//渲染画布
 	var Renderer = function(canvas){
-	    var dom = $(canvas)
+	    var dom    = $(canvas)
     	var canvas = $(canvas).get(0)
-    	var ctx = canvas.getContext("2d");
+    	var ctx    = canvas.getContext("2d");
     	var particleSystem
-    	var gfx = arbor.Graphics(canvas)
+    	var gfx    = arbor.Graphics(canvas)
       
     var that = {
       init:function(system){
-        //
-        // the particle system will call the init function once, right before the
-        // first frame is to be drawn. it's a good place to set up the canvas and
-        // to pass the canvas size to the particle system
-        //
-        // save a reference to the particle system for use in the .redraw() loop
-        particleSystem = system
 
-        // inform the system of the screen dimensions so it can map coords for us.
-        // if the canvas is ever resized, screenSize should be called again with
-        // the new dimensions
+        particleSystem = system
         particleSystem.screenSize(canvas.width, canvas.height) 
-        particleSystem.screenPadding(80) // leave an extra 80px of whitespace per side
-        
-        // set up some event handlers to allow for node-dragging
+        particleSystem.screenPadding(80) 
         that.initMouseHandling()
       },
       
       redraw:function(){
-        // 
-        // redraw will be called repeatedly during the run whenever the node positions
-        // change. the new positions for the nodes can be accessed by looking at the
-        // .p attribute of a given node. however the p.x & p.y values are in the coordinates
-        // of the particle system rather than the screen. you can either map them to
-        // the screen yourself, or use the convenience iterators .eachNode (and .eachEdge)
-        // which allow you to step through the actual node objects but also pass an
-        // x,y point in the screen's coordinate system
-        // 
-        ctx.fillStyle = "white"
+        ctx.fillStyle = "gray"
         ctx.fillRect(0,0, canvas.width, canvas.height)
 
         particleSystem.eachEdge(function(edge, p1, p2){
@@ -82,26 +62,19 @@
         })
 
         
-
-
-		particleSystem.eachNode(function(node, pt){
-			// alert("nihao")
+		    particleSystem.eachNode(function(node, pt){
           var w = Math.max(20, 20+gfx.textWidth(node.name) )
           if (node.data.alpha===0) return
           if (node.data.shape=='dot'){
-          	// console.log("redraw")
             gfx.oval(pt.x-w/2, pt.y-w/2, w, w, {fill:node.data.color, alpha:node.data.alpha})
             gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
             // gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
           }else{
-          	// console.log("redraw1")
             gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
             gfx.text(node.name||"", pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
             // gfx.text(node.name||"", pt.x, pt.y+9, {color:"green", align:"center", font:"Arial", size:12})
           }
         })
-
-
       },
       // switchSection:function(newSection){
       	
@@ -138,9 +111,7 @@
           return edge.target
         })
         
-        console.log(newNode.data.level)
         particleSystem.eachNode(function(node){
-          console.log(node.name)
           // console.log("aaa"+node.data.level)
           if (newNode.data.level == 'second'){
             if(!(node.data.level == 'third' || node.data.level =='fourth')) return
@@ -184,28 +155,28 @@
             nearest = particleSystem.nearest(_mouseP);
 
             if (!nearest.node) return false
-
+            
 
             selected = (nearest.distance < 50) ? nearest : null
 
-            if (nearest.node.data.shape!='dot'){ //add to forbid dot click
+            // if (nearest.node.data.shape!='dot'){ //add to forbid dot click
               
-              if (selected){
-                 dom.addClass('linkable')
-                 window.status = selected.node.data.link.replace(/^\//,"http://"+window.location.host+"/").replace(/^#/,'')
-              }
-              else{
-                 dom.removeClass('linkable')
-                 window.status = ''
-              }
-            }else if ($.inArray(nearest.node.name, nodesArray) >=0 ){
-              if (nearest.node.name!=_section){
-                _section = nearest.node.name
-                // that.switchSection(_section)
-              }
-              dom.removeClass('linkable')
-              window.status = ''
-            }
+            //   if (selected){
+            //      dom.addClass('linkable')
+            //      window.status = selected.node.data.link.replace(/^\//,"http://"+window.location.host+"/").replace(/^#/,'')
+            //   }
+            //   else{
+            //      dom.removeClass('linkable')
+            //      window.status = ''
+            //   }
+            // }else if ($.inArray(nearest.node.name, nodesArray) >=0 ){
+            //   if (nearest.node.name!=_section){
+            //     _section = nearest.node.name
+            //      // that.switchSection(_section)
+            //   }
+            //   dom.removeClass('linkable')
+            //   window.status = ''
+            // }
             
             return false
           },
@@ -214,30 +185,22 @@
             var pos = $(canvas).offset();
             _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
             nearest = dragged = particleSystem.nearest(_mouseP);
+            
+            
             if (nearest && selected && nearest.node===selected.node && selected.node.data.level!='first'){
               that.switchSection(selected.node)
-              // var link = selected.node.data.linkd
-              // console.log("LLLLLLLLLLLLLLLL"+link)
-              // if (link.match(/^#/)){
-              // 	console.log("lnnnnn11111111111nk")
-              //    $(that).trigger({type:"navigate", path:link.substr(1)})
-              // }else{
-              // 	console.log("lnnnnnnk")
-              //    window.location = link
-              // }
-              return false
+              // return false
             }
             
-            
             if (dragged && dragged.node !== null) dragged.node.fixed = true
-
-            $(canvas).unbind('mousemove', handler.moved);
-            $(canvas).bind('mousemove', handler.dragged)
-            $(window).bind('mouseup', handler.dropped)
+            // $(canvas).unbind('mousemove', handler.moved);
+            $(canvas).bind('mousemove', handler.dragged);
+            $(window).bind('mouseup', handler.dropped);
 
             return false
           },
           dragged:function(e){
+            console.log("draggggggg")
             var old_nearest = nearest && nearest.node._id
             var pos = $(canvas).offset();
             var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
@@ -247,7 +210,6 @@
               var p = particleSystem.fromScreen(s)
               dragged.node.p = p
             }
-
             return false
           },
 
@@ -277,7 +239,7 @@
 
 	//Javascript 只有在DOM元素已经定义以后才可以对其执行某种操作，jQuery使用document.ready来保证所要执行的代码是在DOM元素被加载完成的情况下执行
 	$(document).ready(function(){
-		  var sys = arbor.ParticleSystem(512,2600,0.5)
+		  var sys = arbor.ParticleSystem(512,1000,0.5)
 		  sys.parameters({gravity:true})
     	sys.renderer = Renderer("#viewcanvas")
 
@@ -296,7 +258,7 @@
       
 
 		  var theUI = {
-		      nodes:{[nodesArray[0]]:{color:"red", shape:"dot", alpha:1},
+		      nodes:{[nodesArray[0]]:{color:"red", shape:"dot",level:"first", alpha:1,link:''},
 		             [nodesArray[1]]:{color:CLR.demo, shape:"dot",level:"first",alpha:1,link:'http://www.hax.co'},
 		             [nodesArray[2]]:{color:CLR.demo, shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
 		             [nodesArray[3]]:{color:CLR.demo,shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
@@ -343,22 +305,22 @@
 		            },
 		      edges:{
 		        [nodesArray[0]]:{
-		          [nodesArray[1]]:{length:5},
-		          [nodesArray[2]]:{length:4},
-		          [nodesArray[3]]:{length:3},
+		          [nodesArray[1]]:{length:3, pointSize:3},
+		          [nodesArray[2]]:{length:8},
+		          [nodesArray[3]]:{length:6},
 		          [nodesArray[4]]:{length:7},
-              [nodesArray[5]]:{length:8}
+              [nodesArray[5]]:{length:9}
 		        },
             [nodesArray[5]]:{
               [nodesArray[6]]:{length:5},
-              [nodesArray[7]]:{length:5},
-              [nodesArray[8]]:{length:5},
-              [nodesArray[9]]:{length:5},
-              [nodesArray[10]]:{length:5},
-              [nodesArray[11]]:{length:5},
-              [nodesArray[12]]:{length:5},
-              [nodesArray[13]]:{length:5},
-              [nodesArray[14]]:{length:5},
+              [nodesArray[7]]:{length:6},
+              [nodesArray[8]]:{length:7},
+              [nodesArray[9]]:{length:8},
+              [nodesArray[10]]:{length:9},
+              [nodesArray[11]]:{length:10},
+              [nodesArray[12]]:{length:11},
+              [nodesArray[13]]:{length:12},
+              [nodesArray[14]]:{length:13},
               [nodesArray[15]]:{length:5}
             },
             [nodesArray[6]]:{
