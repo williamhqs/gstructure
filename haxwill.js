@@ -50,10 +50,17 @@
         particleSystem.screenSize(canvas.width, canvas.height) 
         particleSystem.screenPadding(80) 
         that.initMouseHandling()
+
+        particleSystem.eachNode(function(node, pt) {
+          if(node.data.image) {
+            node.data.imageob = new Image()
+            node.data.imageob.src = "images/" + node.data.image
+          }
+        })
       },
       
       redraw:function(){
-        ctx.fillStyle = "gray"
+        ctx.fillStyle = "white"
         ctx.fillRect(0,0, canvas.width, canvas.height)
 
         particleSystem.eachEdge(function(edge, p1, p2){
@@ -61,13 +68,39 @@
           gfx.line(p1, p2, {stroke:"#b2b19d", width:2, alpha:edge.target.data.alpha})
         })
 
-        
+        //名字是否有空格
+        function hasWhiteSpace(s) {
+            return s.indexOf(' ') >= 0;
+        }
+
 		    particleSystem.eachNode(function(node, pt){
-          var w = Math.max(20, 20+gfx.textWidth(node.name) )
+
+          var imageob = node.data.imageob
+          var radius  = node.data.radius
+          var imageW  = 30
+          var imageH  = 30
+          var w = Math.max(20, 20+gfx.textWidth(node.name) ) //这个是取文字的大小，但不能小于20
+
+          var ww = Math.max(80,imageW)
           if (node.data.alpha===0) return
           if (node.data.shape=='dot'){
-            gfx.oval(pt.x-w/2, pt.y-w/2, w, w, {fill:node.data.color, alpha:node.data.alpha})
-            gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
+            gfx.oval(pt.x-ww/2, pt.y-ww/2, ww, ww, {fill:node.data.color, alpha:node.data.alpha})
+            if (imageob) {
+                ctx.drawImage(imageob, pt.x-imageW/2, pt.y-imageH/2-7, imageW, imageH)  
+                gfx.text(node.name, pt.x, pt.y+imageH/2+6, {color:"white", align:"center", font:"Arial", size:12})
+            }else{
+              if(hasWhiteSpace(node.name)) {
+                var words = node.name.split(' ')
+                for(var i=0; i<words.length; i++) {
+                  gfx.text(words[i], pt.x, pt.y-8+13*(i+1), {color:"white", align:"center", font:"Arial", size:12})
+                }
+              }else{
+                gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
+                // gfx.text("nihao", pt.x, pt.y+7+15, {color:"white", align:"center", font:"Arial", size:12})
+              }
+                
+            }
+
             // gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
           }else{
             gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
@@ -258,7 +291,7 @@
       
 
 		  var theUI = {
-		      nodes:{[nodesArray[0]]:{color:"red", shape:"dot",level:"first", alpha:1,link:''},
+		      nodes:{[nodesArray[0]]:{color:"red", shape:"dot",level:"first", alpha:1,link:'',image: 'haxsticker.png',radius:'30'},
 		             [nodesArray[1]]:{color:CLR.demo, shape:"dot",level:"first",alpha:1,link:'http://www.hax.co'},
 		             [nodesArray[2]]:{color:CLR.demo, shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
 		             [nodesArray[3]]:{color:CLR.demo,shape:"dot",level:"first", alpha:1,link:'http://www.hax.co'},
