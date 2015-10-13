@@ -39,9 +39,12 @@
             node.data.imageob = new Image()
             if(!(node.name.includes("001"))) {
               src += (name + ".png")
-              console.log(src)
+            }else{
+              return
             }
-            node.data.imageob.src = src//node.data.image
+            var srcF = src.replace(/ /g, '%20')
+            // console.log(src.replace(/ /g, '%20'))
+            node.data.imageob.src = srcF//node.data.image
           })
       },
       
@@ -78,16 +81,16 @@
                 if(hasWhiteSpace(name)) {
                   var words = name.split(' ')
                   for(var i=0; i<words.length; i++) {
-                    gfx.text(words[i], pt.x, pt.y-8+13*(i+1), {color:"white", align:"center", font:"Arial", size:24})
+                    gfx.text(words[i], pt.x, pt.y-8+13*(i+1), {color:"white", align:"center", font:"Arial", size:14})
                   }
                 }else{
-                  gfx.text(name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:24})
+                  gfx.text(name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:14})
                 }
               }
               // gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
             }else{
               gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
-              gfx.text(name||"", pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:24})
+              gfx.text(name||"", pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:14})
               // gfx.text(node.name||"", pt.x, pt.y+9, {color:"green", align:"center", font:"Arial", size:12})
             }
           })
