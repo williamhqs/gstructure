@@ -1,0 +1,56 @@
+{
+	"nodes":{
+		"000HAX":{"color":"", "shape":"dot","level":"first", "alpha":1,"link":""},
+			"001Medical":{},
+			"001Advanced Manufacturing":{},
+			"001IoT Enablement":{},
+			"001Robotics":{},
+				"002Consumer":{},
+					 "003Smart home":{},  
+	                 "003Pet tech":{},   
+	                 "003Sport tech":{}, 
+	                 "003Food & Bev":{}, 
+	                 "003Beauty":{},     
+	                 "003Gaming":{},     
+	                 "003Lifestyle":{},  
+	                 "003Audio":{},      
+	                 "003HCI":{},        
+	                 "003Ed-tech":{},
+	                 	"004PinPress":{"shape":"dot"},
+	                 	"004pycno":{"shape":"dot"},
+	                 	"004tin whiskers":{"shape":"dot"},
+						"004electroloom":{"shape":"dot"},
+						"004snssor":{"shape":"dot"},
+						"004voltera":{"shape":"dot"}    
+	},
+	"edges":{
+		"000HAX":{
+			"001Medical":{},
+			"001Advanced Manufacturing":{},
+			"001IoT Enablement":{},
+			"001Robotics":{},
+			"002Consumer":{}
+		},
+		"002Consumer":{
+			 "003Smart home":{},
+			 "003Pet tech":{},   
+	         "003Sport tech":{}, 
+	         "003Food & Bev":{}, 
+	         "003Beauty":{},     
+	         "003Gaming":{},     
+	         "003Lifestyle":{},  
+	         "003Audio":{},      
+	         "003HCI":{},        
+	         "003Ed-tech":{}     
+		},
+		"003Ed-tech":{
+			"004PinPress":{},
+         	"004pycno":{},
+         	"004tin whiskers":{},
+			"004electroloom":{},
+			"004snssor":{},
+			"004voltera":{} 
+		}
+
+	}
+}
