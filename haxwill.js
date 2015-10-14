@@ -6,8 +6,6 @@
 	var Renderer = function(canvas){
 	    var dom    = $(canvas)
     	var canvas = $(canvas).get(0)
-      // canvas.width  = 800;
-      // canvas.height = 600;
     	var ctx    = canvas.getContext("2d");
     	var particleSystem
     	var gfx    = arbor.Graphics(canvas)
@@ -27,30 +25,16 @@
 
     var that = {
       init:function(system){
+        console.log("this is init")
           particleSystem = system
           // particleSystem.screenSize(canvas.width, canvas.height) 
           particleSystem.screenSize(800, 600) 
           particleSystem.screenPadding(80) 
           that.initMouseHandling()
-
-          particleSystem.eachNode(function(node, pt) {
-            var src = "images/"
-            var name = node.name.substring(3,node.name.length)
-            node.data.imageob = new Image()
-            if(!(node.name.includes("001"))) {
-              src += (name + ".png")
-            }else{
-              return
-            }
-            var srcF = src.replace(/ /g, '%20')
-            // console.log(src.replace(/ /g, '%20'))
-            node.data.imageob.src = srcF//node.data.image
-          })
       },
       
       redraw:function(){
           ctx.fillStyle = "gray"
-          
           // ctx.fillRect(0,0, 300, 300)
           ctx.fillRect(0,0, canvas.width, canvas.height)
           particleSystem.eachEdge(function(edge, p1, p2){
@@ -63,14 +47,25 @@
               return s.indexOf(' ') >= 0;
           }
 
-  		    particleSystem.eachNode(function(node, pt){
-            var imageob = node.data.imageob
-            var imageW  = 50
-            var imageH  = 50
-            var w = Math.max(20, 20+gfx.textWidth(node.name) ) //这个是取文字的大小，但不能小于20
+  		    particleSystem.eachNode(function(node, pt){ 
+            var imageob
 
+            if(node.name.includes("004") || node.name.includes("000")) {
+              var name = node.name.substring(3,node.name.length)
+              var src = "images/"
+              node.data.imageob = new Image()
+              src += (name + ".png")
+              var srcF = src.replace(/ /g, '%20')
+              node.data.imageob.src = srcF
+              imageob = node.data.imageob
+            }
+
+            var imageW  = 25
+            var imageH  = 25
+            var w = Math.max(20, 20+gfx.textWidth(node.name) ) //这个是取文字的大小，但不能小于20
             var name = node.name.substring(3,node.name.length) //去除数字
-            var ww = Math.max(60,imageW)
+            
+            var ww = Math.max(25,imageW)
             if (node.data.alpha===0) return
             if (node.data.shape=='dot'){
               // gfx.oval(pt.x-ww/2, pt.y-ww/2, ww, ww, {fill:node.data.color, alpha:node.data.alpha})
@@ -95,8 +90,8 @@
             }
           })
           
-          canvas.style.width = 800
-          canvas.style.height = 600
+          // canvas.style.width = 800
+          // canvas.style.height = 600
       },
       
       switchSection:function(newNode){
@@ -145,31 +140,27 @@
             nearest = null;
             var dragged = null;
             var oldmass = 1
-
             var _section = null
 
         var handler = {
             moved:function(e){
                 var pos = $(canvas).offset();
                 _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
-            
                  nearest = particleSystem.nearest(_mouseP);
-                $('#Offest-X').text("Offest-X:"+nearest.point.x)
-                $('#Offest-Y').text("Offest-Y:"+ nearest.point.y)
                 if (!nearest.node) return false
                 selected = (nearest.distance < 50) ? nearest : null
                 return false
             },
             //Rules here: Only level > 'second' can be clicked
             clicked:function(e){
-              console.log("hello")
+    
               var pos = $(canvas).offset();
               _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
               
               nearest = dragged = particleSystem.nearest(_mouseP);
               
               if (nearest && selected && nearest.node===selected.node && selected.node.data.level!='first'){
-                that.switchSection(selected.node)
+                // that.switchSection(selected.node)
                 // return false
                 console.log("hello1")
               }
@@ -222,6 +213,12 @@
 	//Javascript 只有在DOM元素已经定义以后才可以对其执行某种操作，jQuery使用document.ready来保证所要执行的代码是在DOM元素被加载完成的情况下执行
 	$(document).ready(function(){
 		  var sys = arbor.ParticleSystem(512,1000,1.0)
+
+      var data = $.getJSON("json/nodes.json",function(data){
+        console.log("get json")
+          sys.graft({nodes:data.nodes, edges:data.edges})
+      })
+
 		  sys.parameters({gravity:true})
     	sys.renderer = Renderer("#viewcanvas")
     	//examples
@@ -237,9 +234,8 @@
         company:"green"
 	    }
       
-      var data = $.getJSON("json/nodes.json",function(data){
-          sys.graft({nodes:data.nodes, edges:data.edges})
-      })
+      
+      
 
     })
 
